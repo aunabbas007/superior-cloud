@@ -35,12 +35,13 @@ import { createBrowserClient } from '@supabase/ssr';
 import { useRouter }           from 'next/navigation';
 
 // Singleton at module scope — not inside the component.
-const supabase = createBrowserClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-);
+
 
 export default function LoginPage() {
+  const supabase = createBrowserClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  );
   const [email,    setEmail]    = useState('');
   const [password, setPassword] = useState('');
   const [loading,  setLoading]  = useState(false);
@@ -232,4 +233,3 @@ export default function LoginPage() {
     </div>
   );
 }
-

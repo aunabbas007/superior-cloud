@@ -10,10 +10,7 @@ import { useRouter } from 'next/navigation';
 // new instance on every render — the new instance has no session, RLS blocks all
 // queries, fetchFiles returns 0 rows, and the skeleton loader never clears.
 // Module scope = created once, same instance reused, session persists correctly.
-const supabase = createBrowserClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-);
+
 
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -427,6 +424,11 @@ function KnowledgeGraph({ files, onSelectFile }: { files: CloudFile[]; onSelectF
 // DASHBOARD
 // ─────────────────────────────────────────────────────────────────────────────
 export default function Dashboard() {
+  // Supabase client created inside component — never runs at build time
+  const supabase = createBrowserClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  );
   const router   = useRouter();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const chatEndRef   = useRef<HTMLDivElement>(null);
@@ -2870,4 +2872,3 @@ ${data.summary}
     </>
   );
 }
-
