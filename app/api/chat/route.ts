@@ -8,8 +8,7 @@ import { NextResponse }  from 'next/server';
 import { VoyageAIClient } from 'voyageai';
 import { Groq }           from 'groq-sdk';
 
-const voyage = new VoyageAIClient({ apiKey: process.env.VOYAGE_API_KEY! });
-const groq   = new Groq({ apiKey: process.env.GROQ_API_KEY! });
+// Clients initialized per-request inside POST — safe for serverless
 
 const FAST_MODEL      = 'meta-llama/llama-4-scout-17b-16e-instruct';
 const SYNTHESIS_MODEL = 'llama-3.3-70b-versatile';
@@ -381,6 +380,7 @@ function isFileOpMessage(msg: string, fileNames: string[] = []): boolean {
 async function parseFileOperation(
   message:  string,
   allFiles: { id: string; name: string; category: string; created_at: string; folder?: string }[],
+  groq: Groq,
 ): Promise<{
   operation:     'move' | 'archive' | 'delete' | 'restore' | 'rename' | 'reclassify';
   fileIds:       string[];
@@ -561,6 +561,10 @@ export async function POST(req: Request) {
     } catch {}
     if (authError) return authError;
 
+    // Initialize AI clients inside request — required for Vercel serverless
+    const voyage = new VoyageAIClient({ apiKey: process.env.VOYAGE_API_KEY! });
+    const groq   = new Groq({ apiKey: process.env.GROQ_API_KEY! });
+
     const noFiles    = fileFilter.length === 0;
     const lowerMsg   = message.toLowerCase();
 
@@ -578,7 +582,7 @@ export async function POST(req: Request) {
 
       const allFilesForOp = quickFiles; // already fetched above
 
-      const parsedOp = await parseFileOperation(message, allFilesForOp ?? []);
+      const parsedOp = await parseFileOperation(message, allFilesForOp ?? [], groq);
 
       if (parsedOp) {
         const affectedFiles = (allFilesForOp ?? [])
