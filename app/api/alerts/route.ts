@@ -1,3 +1,4 @@
+export const dynamic = 'force-dynamic'
 import { createClient }      from '@supabase/supabase-js';
 import { getVerifiedUserId } from '@/lib/auth';
 import { NextResponse }  from 'next/server';
@@ -205,3 +206,4 @@ export async function PATCH(req: Request) {
     return NextResponse.json({ error: e.message }, { status: 500 });
   }
 }
+

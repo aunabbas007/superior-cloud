@@ -1,3 +1,4 @@
+export const dynamic = 'force-dynamic'
 // PATH: app/api/files/download/route.ts
 // Generates a short-lived signed URL so the user can download the original file.
 // Security: JWT verified + ownership checked before any URL is generated.
@@ -60,3 +61,4 @@ export async function GET(req: Request) {
     return NextResponse.json({ error: err.message }, { status: 500 });
   }
 }
+

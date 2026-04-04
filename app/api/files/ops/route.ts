@@ -1,3 +1,4 @@
+export const dynamic = 'force-dynamic'
 // PATH: app/api/files/ops/route.ts
 //
 // Executes confirmed file operations from the NL file management dialog.
@@ -159,3 +160,4 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: err.message }, { status: 500 });
   }
 }
+

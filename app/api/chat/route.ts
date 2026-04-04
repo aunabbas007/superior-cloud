@@ -1,3 +1,4 @@
+export const dynamic = 'force-dynamic'
 // PATH: app/api/chat/route.ts
 import { createClient }      from '@supabase/supabase-js';
 import { getVerifiedUserId } from '@/lib/auth';
@@ -961,3 +962,4 @@ ${results}
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
+

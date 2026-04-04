@@ -1,3 +1,4 @@
+export const dynamic = 'force-dynamic'
 import { createClient }      from '@supabase/supabase-js';
 import { getVerifiedUserId } from '@/lib/auth';
 import { NextResponse }  from 'next/server';
@@ -146,3 +147,4 @@ RULES:
     return NextResponse.json({ success: false, reason: e.message });
   }
 }
+

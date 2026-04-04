@@ -1,3 +1,4 @@
+export const dynamic = 'force-dynamic'
 // PATH: app/api/files/semantic-dupes/route.ts
 //
 // Finds near-duplicate files using two signals:
@@ -216,3 +217,4 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: err.message }, { status: 500 });
   }
 }
+

@@ -1,3 +1,4 @@
+export const dynamic = 'force-dynamic'
 // PATH: app/api/sensitivity/route.ts
 // Scans all user files for PII (Personally Identifiable Information).
 // Uses regex patterns on already-indexed document text — no new AI calls.
@@ -143,3 +144,4 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: err.message }, { status: 500 });
   }
 }
+

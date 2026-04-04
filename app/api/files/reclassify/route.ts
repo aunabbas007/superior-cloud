@@ -1,3 +1,4 @@
+export const dynamic = 'force-dynamic'
 // PATH: app/api/files/reclassify/route.ts
 // Allows the user to correct a wrong AI classification.
 // Updates: files.category, documents.category, inserts correction into classification_log.
@@ -120,3 +121,4 @@ export async function PATCH(req: Request) {
     return NextResponse.json({ error: err.message }, { status: 500 });
   }
 }
+

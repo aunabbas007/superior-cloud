@@ -1,3 +1,4 @@
+export const dynamic = 'force-dynamic'
 import { createClient }      from '@supabase/supabase-js';
 import { getVerifiedUserId } from '@/lib/auth';
 import { NextResponse } from 'next/server';
@@ -123,3 +124,4 @@ export async function DELETE(req: Request) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
+

@@ -1,3 +1,4 @@
+export const dynamic = 'force-dynamic'
 // PATH: app/api/timeline/route.ts
 // Builds a personal timeline by extracting dates from indexed document content.
 // No new AI calls — uses already-indexed text in the documents table.
@@ -184,3 +185,4 @@ export async function GET(req: Request) {
     return NextResponse.json({ error: err.message }, { status: 500 });
   }
 }
+

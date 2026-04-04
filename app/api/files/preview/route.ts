@@ -1,3 +1,4 @@
+export const dynamic = 'force-dynamic'
 // PATH: app/api/files/preview/route.ts
 // Returns a signed URL for INLINE rendering (no download disposition).
 // Used by the preview panel iframe — browser renders PDF directly.
@@ -62,3 +63,4 @@ export async function GET(req: Request) {
     return NextResponse.json({ error: err.message }, { status: 500 });
   }
 }
+
