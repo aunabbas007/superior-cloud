@@ -1,4 +1,3 @@
-export const dynamic = 'force-dynamic';
 'use client';
 // PATH: app/login/page.tsx
 //
@@ -233,3 +232,4 @@ export default function LoginPage() {
     </div>
   );
 }
+

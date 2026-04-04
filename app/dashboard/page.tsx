@@ -1,4 +1,3 @@
-export const dynamic = 'force-dynamic';
 'use client';
 import SplashScreen from '../../components/SplashScreen';
 
@@ -2871,3 +2870,4 @@ ${data.summary}
     </>
   );
 }
+
