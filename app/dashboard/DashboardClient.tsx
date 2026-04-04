@@ -1530,7 +1530,7 @@ ${data.summary}
             </div>
             <span className="text-[11px] text-gray-400 truncate">{userEmail}</span>
           </div>
-          <button onClick={() => supabase.auth.signOut().then(() => router.push('/login'))}
+          <button onClick={() => supabase.auth.signOut().then(() => { sessionStorage.removeItem('splash_seen'); router.push('/login'); })}
             className="w-full text-xs text-gray-500 hover:text-gray-300 flex items-center gap-2 px-2 py-1.5 hover:bg-white/5 rounded-lg transition-all">
             <svg width="13" height="13" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>

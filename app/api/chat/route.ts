@@ -1,5 +1,7 @@
-export const dynamic = 'force-dynamic'
 // PATH: app/api/chat/route.ts
+export const dynamic = 'force-dynamic';
+export const maxDuration = 60; // Vercel max for hobby plan
+
 import { createClient }      from '@supabase/supabase-js';
 import { getVerifiedUserId } from '@/lib/auth';
 import { NextResponse }  from 'next/server';
@@ -962,4 +964,3 @@ ${results}
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
-
