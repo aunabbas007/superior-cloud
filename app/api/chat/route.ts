@@ -639,8 +639,16 @@ export async function POST(req: Request) {
       'why is ','who is ','when was ','what day','what date','today','time is it',
       'current date','current time'];
 
-    if (noFiles && FILE_SCOPED.some(p => lowerMsg.includes(p)))
-      return NextResponse.json({ text: "Please select one or more files from the sidebar first — I don't want to guess which file you mean!" });
+    if (noFiles && FILE_SCOPED.some(p => lowerMsg.includes(p))) {
+      const encSel = new TextEncoder();
+      const selStream = new ReadableStream({ start(ctrl) {
+        ctrl.enqueue(encSel.encode(`data: ${JSON.stringify({ type: 'meta', isSynthesis: false, model: FAST_MODEL })}\n\n`));
+        ctrl.enqueue(encSel.encode(`data: ${JSON.stringify({ type: 'token', token: "Please select one or more files from the sidebar first — I don't want to guess which file you mean!" })}\n\n`));
+        ctrl.enqueue(encSel.encode(`data: ${JSON.stringify({ type: 'done' })}\n\n`));
+        ctrl.close();
+      }});
+      return new Response(selStream, { headers: { 'Content-Type': 'text/event-stream', 'Cache-Control': 'no-cache' }});
+    }
 
     const isPureGeneral = noFiles
       && GENERAL_SIGNALS.some(s => lowerMsg.includes(s))
@@ -673,11 +681,21 @@ export async function POST(req: Request) {
 
         const { data: primaryData, error } = await dbQuery;
 
-        if (error) return NextResponse.json({ text: `⚠️ DB setup needed. Run NEW_TABLES.sql in Supabase → SQL Editor.` });
+        if (error) {
+          // Stream the error so frontend SSE reader handles it gracefully
+          const enc = new TextEncoder();
+          const errStream = new ReadableStream({ start(ctrl) {
+            ctrl.enqueue(enc.encode(`data: ${JSON.stringify({ type: 'meta', isSynthesis: false, model: FAST_MODEL })}\n\n`));
+            ctrl.enqueue(enc.encode(`data: ${JSON.stringify({ type: 'token', token: '⚠️ Documents not indexed yet. Please re-upload the file.' })}\n\n`));
+            ctrl.enqueue(enc.encode(`data: ${JSON.stringify({ type: 'done' })}\n\n`));
+            ctrl.close();
+          }});
+          return new Response(errStream, { headers: { 'Content-Type': 'text/event-stream', 'Cache-Control': 'no-cache' }});
+        }
 
         // If page filter returned nothing (page_number is NULL in DB for older files),
         // fall back to fetching ALL chunks — the JS pipeline estimates by chunk_index
-        if (intent.type === 'PAGE_SPECIFIC' && (!primaryData || primaryData.length === 0)) {
+        if (intent.type === 'PAGE_SPECIFIC' && (!(primaryData ?? []).length)) {
           console.log(`   ⚠️  page_number filter returned 0 rows — falling back to full fetch + JS estimation`);
           const { data: fallbackData } = await supabase
             .from('documents')
@@ -690,7 +708,14 @@ export async function POST(req: Request) {
 
         if (rawChunks.length === 0) {
           const names = selectedFileNames.map(n => `"${n}"`).join(', ');
-          return NextResponse.json({ text: `${names} hasn't been indexed yet. Delete and re-upload it — takes ~30s.` });
+          const enc2 = new TextEncoder();
+          const emptyStream = new ReadableStream({ start(ctrl) {
+            ctrl.enqueue(enc2.encode(`data: ${JSON.stringify({ type: 'meta', isSynthesis: false, model: FAST_MODEL })}\n\n`));
+            ctrl.enqueue(enc2.encode(`data: ${JSON.stringify({ type: 'token', token: `${names} hasn't been indexed yet. Delete and re-upload the file — indexing takes about 30 seconds.` })}\n\n`));
+            ctrl.enqueue(enc2.encode(`data: ${JSON.stringify({ type: 'done' })}\n\n`));
+            ctrl.close();
+          }});
+          return new Response(emptyStream, { headers: { 'Content-Type': 'text/event-stream', 'Cache-Control': 'no-cache' }});
         }
 
         console.log(`   ✅ Fetched ${rawChunks.length} chunks from ${selectedFileNames.length} selected file(s)`);
@@ -732,7 +757,7 @@ export async function POST(req: Request) {
           pageChunks = exact;
         } else {
           // Chunk_index estimation: average 2 chunks per page
-          const est = Math.max(0, (pg - 1) * 2);
+          const est = Math.max(0, ((pg ?? 1) - 1) * 2);
           pageChunks = sorted.slice(est, est + 4);
         }
       }
