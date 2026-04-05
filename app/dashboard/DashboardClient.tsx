@@ -1553,18 +1553,24 @@ ${data.summary}
             </svg>
           </button>
 
-          {/* Search — hidden on mobile when chat open to save space */}
-          <div className={`relative flex-1 min-w-0 max-w-md ${chatOpen ? 'hidden md:block' : ''}`}>
+          {/* Search — always visible on mobile */}
+          <div className={`relative flex-1 min-w-0 max-w-md ${chatOpen ? 'hidden md:flex' : 'flex'}`}>
             <div className="search-ring flex items-center gap-3 bg-white/5 border border-white/8 rounded-xl px-4 py-2.5 transition-all">
               <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" className="text-gray-500 flex-shrink-0" viewBox="0 0 24 24">
                 <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
               </svg>
-              <input type="text" placeholder="Search files... try 'resume' or 'government ID'"
+              <input
+                type="search"
+                placeholder="Search files..."
                 value={searchQuery}
                 onChange={e => setSearchQuery(e.target.value)}
                 onBlur={() => setTimeout(() => setShowDropdown(false), 150)}
                 onFocus={() => liveMatches.length > 0 && setShowDropdown(true)}
-                className="bg-transparent text-sm text-gray-200 placeholder-gray-600 outline-none w-full"/>
+                autoComplete="off"
+                autoCorrect="off"
+                autoCapitalize="off"
+                spellCheck={false}
+                className="bg-transparent text-sm text-gray-200 placeholder-gray-600 outline-none w-full min-w-0"/>
               {searchQuery && (
                 <button onClick={() => { setSearchQuery(''); setShowDropdown(false); }} className="text-gray-600 hover:text-gray-400">
                   <svg width="12" height="12" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></svg>
@@ -1887,6 +1893,15 @@ ${data.summary}
                 <div className="flex-shrink-0 px-5 py-4 border-b border-white/5">
                   <div className="flex items-center justify-between mb-1">
                     <div className="flex items-center gap-2">
+                      {/* Back to files — mobile only */}
+                      <button
+                        onClick={() => setChatOpen(false)}
+                        className="flex md:hidden items-center gap-1 text-gray-400 hover:text-gray-200 mr-1 p-1 rounded-lg hover:bg-white/5 transition-all">
+                        <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M15 18l-6-6 6-6"/>
+                        </svg>
+                        <span className="text-xs font-medium">Files</span>
+                      </button>
                       <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"/>
                       <span className="text-sm font-bold">AI Assistant</span>
                     </div>
